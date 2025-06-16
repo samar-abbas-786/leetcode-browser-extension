@@ -1,0 +1,10 @@
+{
+  "name": "chrome-extension",
+  "description": "This is a Chrome extension",
+  "version": "1.0",
+  "manifest_version": 3,
+  "action": {
+    "default_popup": "index.html"
+  },
+  "permissions": []
+}
