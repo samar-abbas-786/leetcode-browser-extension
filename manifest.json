@@ -6,5 +6,11 @@
   "action": {
     "default_popup": "index.html"
   },
-  "permissions": []
+  "content_scripts": [
+    {
+      "js": ["client/src/content.jsx"],
+      "matches": ["https://leetcode.com/problems/*"]
+    }
+  ],
+  "permissions": ["storage"]
 }

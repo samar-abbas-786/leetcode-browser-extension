@@ -1,0 +1,17 @@
+{
+  "name": "chrome-extension",
+  "description": "This is a Chrome extension",
+  "version": "1.0",
+  "manifest_version": 3,
+  "action": {
+    "default_popup": "index.html"
+  },
+  "content_scripts": [
+    {
+      "js": ["src/content.jsx"],
+      "matches": ["https://leetcode.com/problems/*"]
+    }
+  ],
+  "permissions": ["storage"],
+  "host_permissions": ["http://localhost:3001/*"]
+}
