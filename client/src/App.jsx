@@ -1,23 +1,48 @@
-import React, { useEffect, useState } from "react";
+import { useState } from "react";
 
 const App = () => {
-  const [apiKey, setApiKey] = useState(null);
+  const [key, setKey] = useState("");
+  chrome.storage.local.get(["claudeApiKey"], (result) => {
+    if (result.claudeApiKey) {
+      setKey(result.claudeApiKey);
+    }
+  });
 
-  useEffect(() => {
-    const savedKey = localStorage.getItem("openai_api_key");
-    if (!savedKey) {
-      const userKey = prompt("Please enter your OpenAI API key:");
-      if (userKey) {
-        localStorage.setItem("openai_api_key", userKey);
-        setApiKey(userKey);
+  const handleReset = () => {
+    if (!key) {
+      const saveKey = prompt("Enter the Claude Api Key");
+      if (saveKey) {
+        chrome.storage.local.set({ claudeApiKey: saveKey }, () => {
+          console.log("API Key saved to storage");
+        });
+        setKey(saveKey);
       }
     } else {
-      setApiKey(savedKey);
+      chrome.storage.local.remove("claudeApiKey", () => {
+        console.log("API Key removed");
+      });
     }
-  }, []);
+  };
 
   return (
-    <div>{apiKey ? <p>API Key is set!</p> : <p>Waiting for API key...</p>}</div>
+    <div>
+      {
+        <button
+          onClick={handleReset}
+          style={{
+            backgroundColor: "red",
+            color: "white",
+            padding: "8px 16px",
+            borderRadius: "8px",
+            marginTop: "8px",
+            border: "none",
+            cursor: "pointer",
+          }}
+        >
+          {key?"Reset Key":"Add Cluade key"}
+        </button>
+      }
+    </div>
   );
 };
 

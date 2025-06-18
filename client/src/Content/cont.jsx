@@ -44,7 +44,9 @@ const ChatWithClaude = ({ apiKey }) => {
 
   return (
     <div className="fixed bottom-24 right-4 w-[360px] bg-black border border-gray-200 shadow-lg rounded-xl p-4 z-50">
-      <h2 className="text-xl font-semibold text-white mb-2">💬 LeetCode Assistant</h2>
+      <h2 className="text-xl font-semibold text-white mb-2">
+        💬 LeetCode Assistant
+      </h2>
 
       <textarea
         value={prompt}
@@ -79,7 +81,13 @@ const FloatingChatButton = () => {
   const handleClick = () => {
     if (!apiKey) {
       const saveKey = prompt("Enter your Claude API Key:");
+
       if (saveKey) {
+        // Save in chrome.storage
+        chrome.storage.local.set({ claudeApiKey: saveKey }, () => {
+          console.log("API Key saved to storage");
+        });
+
         setApiKey(saveKey);
         setShowChat(true);
       }
@@ -87,6 +95,15 @@ const FloatingChatButton = () => {
       setShowChat(true);
     }
   };
+
+  // In useEffect, load it on component mount
+  useEffect(() => {
+    chrome.storage.local.get(["claudeApiKey"], (result) => {
+      if (result.claudeApiKey) {
+        setApiKey(result.claudeApiKey);
+      }
+    });
+  }, []);
 
   return (
     <>
