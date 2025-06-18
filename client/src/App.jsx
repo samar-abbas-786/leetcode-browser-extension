@@ -19,8 +19,18 @@ const App = () => {
   };
 
   if (!keyExists)
-    return <p style={{ margin: "16px", fontSize: "14px" }}>No Key</p>;
-
+    return (
+      <>
+        {/* <p style={{ margin: "16px", fontSize: "14px" }}>Get Your API KEY</p> */}
+        <a
+          target="_blank"
+          rel="noopener noreferrer"
+          href="https://console.anthropic.com/settings/keys"
+        >
+          Get Your API KEY
+        </a>
+      </>
+    );
   return (
     <div style={{ padding: "16px", textAlign: "center" }}>
       <button
