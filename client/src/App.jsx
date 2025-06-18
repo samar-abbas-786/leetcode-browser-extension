@@ -19,34 +19,21 @@ const App = () => {
   };
 
   if (!keyExists)
-    return (
-      <>
-        <p>No Key</p>
-      </>
-    );
+    return <p style={{ margin: "16px", fontSize: "14px" }}>No Key</p>;
 
   return (
-    <div
-      style={{
-        minHeight: "10vh",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        background: "#f5f5f5",
-        fontFamily: "Arial, sans-serif",
-      }}
-    >
+    <div style={{ padding: "16px", textAlign: "center" }}>
       <button
         onClick={handleReset}
         style={{
           backgroundColor: "#e53935",
           color: "white",
-          padding: "10px 20px",
+          padding: "8px 16px",
           fontSize: "14px",
           borderRadius: "6px",
           border: "none",
           cursor: "pointer",
-          boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+          transition: "background-color 0.3s",
         }}
         onMouseOver={(e) => (e.target.style.backgroundColor = "#c62828")}
         onMouseOut={(e) => (e.target.style.backgroundColor = "#e53935")}
