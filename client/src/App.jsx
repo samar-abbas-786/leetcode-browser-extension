@@ -1,23 +1,27 @@
 import React, { useEffect, useState } from "react";
+import { useApiKey } from "../context/apiContext";
 
 const App = () => {
-  const [apiKey, setApiKey] = useState(null);
+  const { apiKey, setApiKey } = useApiKey();
 
   useEffect(() => {
-    const savedKey = localStorage.getItem("openai_api_key");
-    if (!savedKey) {
-      const userKey = prompt("Please enter your OpenAI API key:");
-      if (userKey) {
-        localStorage.setItem("openai_api_key", userKey);
-        setApiKey(userKey);
-      }
-    } else {
-      setApiKey(savedKey);
+    const userKey = prompt("Please enter your OpenAI API key:");
+    if (userKey) {
+      localStorage.setItem("openai_api_key", userKey);
+      setApiKey(userKey);
     }
   }, []);
 
   return (
-    <div>{apiKey ? <p>API Key is set!</p> : <p>Waiting for API key...</p>}</div>
+    <div className="p-4">
+      {apiKey ? (
+        <>
+          <p>✅ API key is set!</p>
+        </>
+      ) : (
+        <p>🔒 Waiting for API key...</p>
+      )}
+    </div>
   );
 };
 

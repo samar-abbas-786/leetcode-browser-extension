@@ -1,17 +1,18 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
+import { useApiKey } from "../../context/apiContext";
 
 const ChatWithClaude = () => {
   const [prompt, setPrompt] = useState("");
   const [problemStatement, setProblemStatement] = useState("");
   const [response, setResponse] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const { apiKey } = useApiKey();
 
   useEffect(() => {
     const metaDescription = document.querySelector("meta[name=description]");
     if (metaDescription) {
       setProblemStatement(metaDescription.content);
-      console.log("metaDescription.content", metaDescription.content);
     }
   }, []);
 
@@ -25,6 +26,7 @@ const ChatWithClaude = () => {
       const result = await axios.post("http://localhost:3001/api/ask-claude", {
         prompt,
         problemStatement,
+        apiKey,
       });
 
       const reply = result.data?.reply || "No response.";
@@ -76,10 +78,10 @@ const ChatWithClaude = () => {
 
 const FloatingChatButton = () => {
   const [showChat, setShowChat] = useState(false);
-
+  const { apiKey } = useApiKey();
   return (
     <>
-      {!showChat && (
+      {!showChat && apiKey != undefined && (
         <button
           onClick={() => setShowChat(true)}
           className="fixed bottom-4 right-4 bg-black text-white px-4 py-2 rounded-full shadow-lg z-50 hover:bg-gray-800 transition"

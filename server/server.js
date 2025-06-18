@@ -9,7 +9,7 @@ app.use(cors({ origin: "*" })); // open CORS (development only)
 app.use(express.json());
 
 app.post("/api/ask-claude", async (req, res) => {
-  const { prompt, problemStatement } = req.body;
+  const { prompt, problemStatement, apiKey } = req.body;
 
   try {
     const response = await axios.post(
@@ -32,7 +32,7 @@ If the prompt is not related to a LeetCode problem, respond with:
       },
       {
         headers: {
-          "x-api-key": process.env.ANTHROPIC_API_KEY,
+          "x-api-key": apiKey,
           "anthropic-version": "2023-06-01",
           "Content-Type": "application/json",
         },
