@@ -83,7 +83,6 @@ const FloatingChatButton = () => {
       const saveKey = prompt("Enter your Claude API Key:");
 
       if (saveKey) {
-        // Save in chrome.storage
         chrome.storage.local.set({ claudeApiKey: saveKey }, () => {
           console.log("API Key saved to storage");
         });
@@ -96,13 +95,31 @@ const FloatingChatButton = () => {
     }
   };
 
-  // In useEffect, load it on component mount
   useEffect(() => {
+    // Initial load
     chrome.storage.local.get(["claudeApiKey"], (result) => {
       if (result.claudeApiKey) {
         setApiKey(result.claudeApiKey);
       }
     });
+
+    // Watch for changes made from App.jsx or elsewhere
+    const handleStorageChange = (changes, area) => {
+      if (area === "local" && changes.claudeApiKey) {
+        const newValue = changes.claudeApiKey.newValue || "";
+        setApiKey(newValue);
+
+        if (!newValue) {
+          setShowChat(false); // Also hide chat if key was removed
+        }
+      }
+    };
+
+    chrome.storage.onChanged.addListener(handleStorageChange);
+
+    return () => {
+      chrome.storage.onChanged.removeListener(handleStorageChange);
+    };
   }, []);
 
   return (
