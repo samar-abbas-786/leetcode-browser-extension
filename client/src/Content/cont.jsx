@@ -7,13 +7,19 @@ const ChatWithClaude = ({ apiKey }) => {
   const [problemStatement, setProblemStatement] = useState("");
   const [response, setResponse] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [code, setCode] = useState();
 
   useEffect(() => {
-    const metaDescription = document.querySelector("meta[name=description]");
-    if (metaDescription) {
-      setProblemStatement(metaDescription.content);
-    }
+    const getCodeSnippet = document.querySelectorAll(".view-line");
+    let s = "";
+    getCodeSnippet.forEach((viewcode) => {
+      s += viewcode.innerText + "\n";
+    });
+    setCode(s);
+    console.log("Extracted Code:\n", s);
   }, []);
+
+  console.log("code", code);
 
   const handleAsk = async () => {
     if (!prompt.trim()) return alert("Enter a prompt first.");
@@ -25,7 +31,8 @@ const ChatWithClaude = ({ apiKey }) => {
       const result = await axios.post("http://localhost:3001/api/ask-claude", {
         prompt,
         problemStatement,
-        apiKey,
+        code,
+        // apiKey,
       });
 
       const reply = result.data?.reply || "No response.";
@@ -53,19 +60,19 @@ const ChatWithClaude = ({ apiKey }) => {
         onChange={(e) => setPrompt(e.target.value)}
         placeholder="Ask about your code, approach, or get a hint…"
         rows={4}
-        className="w-full resize-none p-3 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none text-gray-800 mb-3"
+        className="w-full h-24 resize-none overflow-hidden p-3 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none text-gray-800 mb-3"
       />
 
       <button
         onClick={handleAsk}
-        className="w-full py-2 font-medium text-white bg-blue-600 shadow-sm shadow-black rounded-lg hover:bg-blue-700 transition duration-200"
+        className="w-full  py-2 font-medium text-white bg-blue-600 shadow-sm shadow-black rounded-lg hover:bg-blue-700 transition duration-200"
         disabled={isLoading}
       >
         {isLoading ? "Thinking..." : "Ask Assistant"}
       </button>
 
       {response && (
-        <div className="bg-gray-900 text-green-100 mt-4 p-3 rounded-lg font-mono whitespace-pre-wrap max-h-60 overflow-auto border border-green-400">
+        <div className="bg-gray-900 text-green-100 mt-4 p-3 rounded-lg font-mono whitespace-pre-wrap max-h-none overflow-y-auto border border-green-400">
           {response}
         </div>
       )}
@@ -79,48 +86,48 @@ const FloatingChatButton = () => {
   const [apiKey, setApiKey] = useState("");
 
   const handleClick = () => {
-    if (!apiKey) {
-      const saveKey = prompt("Enter your Claude API Key:");
+    // if (!apiKey) {
+    //   const saveKey = prompt("Enter your Claude API Key:");
 
-      if (saveKey) {
-        chrome.storage.local.set({ claudeApiKey: saveKey }, () => {
-          console.log("API Key saved to storage");
-        });
+    //   if (saveKey) {
+    //     chrome.storage.local.set({ claudeApiKey: saveKey }, () => {
+    //       console.log("API Key saved to storage");
+    //     });
 
-        setApiKey(saveKey);
-        setShowChat(true);
-      }
-    } else {
-      setShowChat(true);
-    }
+    //     setApiKey(saveKey);
+    setShowChat(true);
   };
+  // } else {
+  //   setShowChat(true);
+  // }
+  // };
 
-  useEffect(() => {
-    // Initial load
-    chrome.storage.local.get(["claudeApiKey"], (result) => {
-      if (result.claudeApiKey) {
-        setApiKey(result.claudeApiKey);
-      }
-    });
+  // useEffect(() => {
+  //   // Initial load
+  //   chrome.storage.local.get(["claudeApiKey"], (result) => {
+  //     if (result.claudeApiKey) {
+  //       setApiKey(result.claudeApiKey);
+  //     }
+  //   });
 
-    // Watch for changes made from App.jsx or elsewhere
-    const handleStorageChange = (changes, area) => {
-      if (area === "local" && changes.claudeApiKey) {
-        const newValue = changes.claudeApiKey.newValue || "";
-        setApiKey(newValue);
+  // Watch for changes made from App.jsx or elsewhere
+  // const handleStorageChange = (changes, area) => {
+  //   if (area === "local" && changes.claudeApiKey) {
+  //     const newValue = changes.claudeApiKey.newValue || "";
+  //     setApiKey(newValue);
 
-        if (!newValue) {
-          setShowChat(false); // Also hide chat if key was removed
-        }
-      }
-    };
+  //     if (!newValue) {
+  //       setShowChat(false); // Also hide chat if key was removed
+  //     }
+  //   }
+  // };
 
-    chrome.storage.onChanged.addListener(handleStorageChange);
+  //   chrome.storage.onChanged.addListener(handleStorageChange);
 
-    return () => {
-      chrome.storage.onChanged.removeListener(handleStorageChange);
-    };
-  }, []);
+  //   return () => {
+  //     chrome.storage.onChanged.removeListener(handleStorageChange);
+  //   };
+  // }, []);
 
   return (
     <>
@@ -129,11 +136,11 @@ const FloatingChatButton = () => {
           onClick={handleClick}
           className="fixed bottom-4 right-4 bg-black text-white px-4 py-2 rounded-full shadow-lg z-50 hover:bg-gray-800 transition"
         >
-          💬 Chat
+          💬 Samar.AI
         </button>
       )}
 
-      {showChat && apiKey && <ChatWithClaude apiKey={apiKey} />}
+      {showChat && <ChatWithClaude apiKey={apiKey} />}
     </>
   );
 };
